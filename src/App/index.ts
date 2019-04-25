@@ -6,8 +6,10 @@
  * @license   MIT
  */
 
+import path from 'path';
+import glob from 'glob';
 import Caporal from 'caporal';
-import { Application, Extensions } from '@fastpanel/core';
+import { Application, Cli, Extensions } from '@fastpanel/core';
 
 /**
  * Class Extension
@@ -24,9 +26,27 @@ export class Extension extends Extensions.ExtensionDefines {
   async register (): Promise<any> {
     /* Registered watchdog event. */
     this.events.on('watchdog', (app: Application) => {});
-
+    
     /* Registered cli commands. */
-    this.events.once('cli:getCommands', (cli: Caporal) => {});
+    this.events.once('cli:getCommands', (cli: Caporal) => {
+      glob.sync(path.resolve(__dirname, 'Commands/**/*.js'), {
+        nosort: true,
+        absolute: true
+      }).forEach((file) => {
+        try {
+          let Command = require(path.resolve(file));
+          let instant = new Command(this.di);
+
+          if (instant instanceof Cli.CommandDefines) {
+            instant.initialize();
+          } else {
+            instant = null;
+          }
+        } catch (error) {
+          this.logger.error(error.toString());
+        }
+      });
+    });
   }
   
   /**

@@ -24,8 +24,8 @@ process.env.APP_CLI_BIN = 'fpm';
 process.env.APP_VERSION = version;
 
 /* Identify the main paths. */
-process.env.CONFIG_PATH = path.resolve(process.env.USERPROFILE, '.fpm/Config');
 process.env.LOGGER_PATH = path.resolve(process.env.USERPROFILE, '.fpm/Logs');
+process.env.CONFIG_PATH = path.resolve(process.env.USERPROFILE, '.fpm/Config');
 
 /* Init and startup app. --------------------------------------------------- */
 /* ------------------------------------------------------------------------- */
