@@ -8,7 +8,6 @@
  * @license   MIT
  */
 
-/*  */
 require('../build');
 
 /* End of file fpm.js */

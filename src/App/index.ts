@@ -6,6 +6,7 @@
  * @license   MIT
  */
 
+import fs from 'fs';
 import path from 'path';
 import glob from 'glob';
 import Caporal from 'caporal';
@@ -52,7 +53,20 @@ export class Extension extends Extensions.ExtensionDefines {
   /**
    * Startup a service provider.
    */
-  async startup (): Promise<any> {}
+  async startup (): Promise<any> {
+
+    /* Load application settings. ------------------------------------------ */
+    /* --------------------------------------------------------------------- */
+
+    let targetPkg = path.resolve(process.cwd(), 'package.json');
+    
+    if (fs.existsSync(targetPkg)) {
+      this.config.set('package', require(targetPkg));
+    }
+
+    /* --------------------------------------------------------------------- */
+    
+  }
 
 }
 

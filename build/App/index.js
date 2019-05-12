@@ -10,6 +10,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
 const glob_1 = __importDefault(require("glob"));
 const core_1 = require("@fastpanel/core");
@@ -52,7 +53,15 @@ class Extension extends core_1.Extensions.ExtensionDefines {
     /**
      * Startup a service provider.
      */
-    async startup() { }
+    async startup() {
+        /* Load application settings. ------------------------------------------ */
+        /* --------------------------------------------------------------------- */
+        let targetPkg = path_1.default.resolve(process.cwd(), 'package.json');
+        if (fs_1.default.existsSync(targetPkg)) {
+            this.config.set('package', require(targetPkg));
+        }
+        /* --------------------------------------------------------------------- */
+    }
 }
 exports.Extension = Extension;
 /* End of file index.ts */ 

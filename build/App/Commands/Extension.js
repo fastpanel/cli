@@ -18,16 +18,40 @@ class Command extends core_1.Cli.CommandDefines {
      * Initialize a commands provider.
      */
     initialize() {
-        this.cli
-            .command('ext', 'Create extension by template.')
-            .action((args, options, logger) => {
-            return new Promise(async (resolve, reject) => {
-                /* Command complete. */
-                resolve();
+        /* Check application settings. */
+        if (!this.config.get('package', false)) {
+            this.cli
+                .command('ext', 'Create extension by template.')
+                .action((args, options, logger) => {
+                return new Promise(async (resolve, reject) => {
+                    /* Command complete. */
+                    resolve();
+                });
             });
-        });
+            this.cli
+                .command('ext:local', 'Create extension by template.')
+                .visible(false)
+                .action((args, options, logger) => {
+                return new Promise(async (resolve, reject) => {
+                    /*  */
+                    logger.info('ext:local');
+                    /* Command complete. */
+                    resolve();
+                });
+            });
+            this.cli
+                .command('ext:global', 'Create extension by template.')
+                .visible(false)
+                .action((args, options, logger) => {
+                return new Promise(async (resolve, reject) => {
+                    /*  */
+                    logger.info('ext:global');
+                    /* Command complete. */
+                    resolve();
+                });
+            });
+        }
     }
 }
-/*  */
 module.exports = Command;
 /* End of file Extension.ts */ 

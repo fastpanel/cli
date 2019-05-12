@@ -1,6 +1,6 @@
 {
   "name": "@fastpanel/cli",
-  "version": "0.0.1",
+  "version": "0.0.1-alpha.1",
   "description": "Development tools for \"fastPanel\".",
   "author": "Desionlab <fenixphp@gmail.com> (http://www.desionlab.net/)",
   "preferGlobal": true,
@@ -36,14 +36,14 @@
     "node": ">=8"
   },
   "dependencies": {
-    "@fastpanel/core": "^0.1.1-alpha.1"
+    "@fastpanel/core": "^0.1.1-alpha.2"
   },
   "devDependencies": {
     "@types/chai": "^4.1.7",
-    "@types/inquirer": "^6.0.0",
-    "@types/lodash": "^4.14.123",
+    "@types/inquirer": "^6.0.1",
+    "@types/lodash": "^4.14.126",
     "@types/mocha": "^5.2.6",
-    "@types/node": "^11.13.6",
+    "@types/node": "^12.0.0",
     "@types/prettyjson": "^0.0.29",
     "@types/progress": "^2.0.3",
     "@types/shelljs": "^0.8.5",
@@ -53,7 +53,7 @@
     "mocha": "^6.1.4",
     "ts-node": "^8.1.0",
     "typedoc": "^0.14.2",
-    "typescript": "^3.4.4"
+    "typescript": "^3.4.5"
   },
   "license": "MIT"
 }
