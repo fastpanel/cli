@@ -42,25 +42,38 @@ handler
     /* Startup success. */
     .then(async () => {
     /* Check command and target app. */
-    if (process.argv.length > 2 &&
+    if (
+    /* --------------------------------------------------------------------- */
+    (process.argv.length > 2 &&
         handler.config.get('package', false) &&
         fs_1.default.existsSync(path_1.default.resolve(process.cwd(), 'build/cli.js')) &&
-        !handler.cli.getCommands().filter((c) => (c.name() === process.argv[2] || c.getAlias() === process.argv[2])).length ||
-        !handler.cli.getCommands().length) {
+        !handler.cli.getCommands().filter((c) => (c.name() === process.argv[2] || c.getAlias() === process.argv[2])).length) ||
+        /* --------------------------------------------------------------------- */
+        (process.argv.length > 2 &&
+            handler.config.get('package', false) &&
+            fs_1.default.existsSync(path_1.default.resolve(process.cwd(), 'build/cli.js')) &&
+            !handler.cli.getCommands().length)) {
         /* Spawn target app. */
-        new Promise(async (resolve, reject) => {
-            let child = child_process_1.spawn('node', ['build/cli.js', ...process.argv.slice(2)], {
-                env: {},
-                cwd: process.cwd(),
-                stdio: "inherit"
+        try {
+            await new Promise(async (resolve, reject) => {
+                let child = child_process_1.spawn('node', ['build/cli.js', ...process.argv.slice(2)], {
+                    env: {},
+                    cwd: process.cwd(),
+                    stdio: "inherit"
+                });
+                child.on('close', (code, signal) => {
+                    resolve();
+                });
+                child.on('error', (error) => {
+                    reject(error);
+                });
             });
-            child.on('close', (code, signal) => {
-                resolve();
-            });
-        }).then(() => {
-            /* Close all connections. */
-            process.exit(0);
-        });
+        }
+        catch (error) {
+            handler.logger.error(error.toString());
+        }
+        /* Close all connections. */
+        process.exit(0);
     }
     else {
         /* Startup cli handler. */

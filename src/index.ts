@@ -49,27 +49,40 @@ handler
 .then(async () => {
   /* Check command and target app. */
   if (
-    process.argv.length > 2 &&
+    /* --------------------------------------------------------------------- */
+    (process.argv.length > 2 &&
     handler.config.get('package', false) &&
     fs.existsSync(path.resolve(process.cwd(), 'build/cli.js')) &&
-    !handler.cli.getCommands().filter((c: any) => (c.name() === process.argv[2] || c.getAlias() === process.argv[2])).length ||
-    !handler.cli.getCommands().length
+    !handler.cli.getCommands().filter((c: any) => (c.name() === process.argv[2] || c.getAlias() === process.argv[2])).length) ||
+    /* --------------------------------------------------------------------- */
+    (process.argv.length > 2 &&
+    handler.config.get('package', false) &&
+    fs.existsSync(path.resolve(process.cwd(), 'build/cli.js')) &&
+    !handler.cli.getCommands().length)
   ) {
     /* Spawn target app. */
-    new Promise(async (resolve, reject) => {
-      let child = spawn('node', ['build/cli.js', ...process.argv.slice(2)], {
-        env: {},
-        cwd: process.cwd(),
-        stdio: "inherit"
+    try {
+      await new Promise(async (resolve, reject) => {
+        let child = spawn('node', ['build/cli.js', ...process.argv.slice(2)], {
+          env: {},
+          cwd: process.cwd(),
+          stdio: "inherit"
+        });
+        
+        child.on('close', (code, signal) => {
+          resolve();
+        });
+
+        child.on('error', (error) => {
+          reject(error);
+        });
       });
-  
-      child.on('close', (code, signal) => {
-        resolve();
-      });
-    }).then(() => {
-      /* Close all connections. */
-      process.exit(0);
-    });
+    } catch (error) {
+      handler.logger.error(error.toString());
+    }
+
+    /* Close all connections. */
+    process.exit(0);
   } else {
     /* Startup cli handler. */
     await handler.cli.parse(process.argv);

@@ -10,7 +10,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const ejs_1 = __importDefault(require("ejs"));
 const path_1 = __importDefault(require("path"));
+const child_process_1 = require("child_process");
 const core_1 = require("@fastpanel/core");
 /**
  * Class Command
@@ -28,6 +30,40 @@ class Command extends core_1.Cli.CommandDefines {
                 .command('app', 'Create application by template.')
                 .action((args, options, logger) => {
                 return new Promise(async (resolve, reject) => {
+                    /* Init npm project. */
+                    try {
+                        await new Promise((resolve, reject) => {
+                            let child = child_process_1.spawn(/^win/.test(process.platform) ? 'npm.cmd' : 'npm', ['init', '--yes'], {
+                                env: {
+                                    APPDATA: process.env.APPDATA
+                                },
+                                cwd: process.cwd(),
+                                stdio: "ignore"
+                            });
+                            child.on('close', (code, signal) => {
+                                resolve();
+                            });
+                            child.on('error', (error) => {
+                                reject(error);
+                            });
+                        });
+                    }
+                    catch (error) {
+                        reject(error);
+                    }
+                    /* Load npm package. */
+                    try {
+                        this.config.set('package', require(path_1.default.resolve(process.cwd(), 'package.json')));
+                    }
+                    catch (error) {
+                        reject(error);
+                    }
+                    /* Show welcome message. */
+                    logger.info(await ejs_1.default.renderFile(path_1.default.resolve(__dirname, '../../../templates', 'app/welcome.ejs'), {
+                        package: this.config.get('package', {})
+                    }, {
+                        root: path_1.default.resolve(__dirname, '../../../templates')
+                    }));
                     /* Show prompts to user. */
                     let answers = await this.prompt([
                         {
